@@ -1,0 +1,11 @@
+
+Jumper J2   1/2 or 1 times clk
+Jumper J1   22 or 24
+Jumper J0   slave or master
+
+The Jumper J2 is used to obtain half the frequency that you have cut on J1 the 22 or 24
+
+for example J1 in 24 and J2 in position 1/2 clock your clock frequency is 12mhz
+With the dip siwtch 3 on + you get 96k and on - 48k
+If you want 192k you have to put J1 on 24 and J2 on full, not on 1/2 clock
+Is that clear to you?
