@@ -7,8 +7,8 @@
 
 #include <Arduino.h>
 
-#include "esp_err.h"
-#include "esp_log.h"
+// #include "esp_err.h"
+// #include "esp_log.h"
 
 #include "PPM_Meter.hpp"
 #include "I2S_Input.hpp"
@@ -21,10 +21,8 @@ struct AMessage
 {
     int16_t left;
     int16_t right;
-} ; //xMessage;
+};
 
-/// @brief 
-/// @param pvParameters 
 void Task_ReadI2S(void *pvParameters)
 {
     //log_i("CoreID %i", (int)xPortGetCoreID());
@@ -46,7 +44,6 @@ void Task_ReadI2S(void *pvParameters)
 
         xQueueSend(xStructQueue, (void *)&xMessage, (TickType_t)0);
 
-        // vTaskDelay(1 / portTICK_RATE_MS);
         vTaskDelay(0);
     }
 }
@@ -71,18 +68,17 @@ void Task_UpdateBallistiics(void *pvParameters)
         else
         {
             // log_e("xStructQueue == NULL");
-            // vTaskDelay(1 / portTICK_RATE_MS);
         }
-        // vTaskDelay(1 / portTICK_RATE_MS);
+
         vTaskDelay(0);
     }
 }
 
 void setup()
 {
-    Serial.begin(115200);
-    delay(1000);
-    // esp_log_level_set("*", ESP_LOG_ERROR);    // set all components to ERROR level
+    // Serial.begin(115200);
+    // delay(1000);
+    // // esp_log_level_set("*", ESP_LOG_ERROR);    // set all components to ERROR level
     // esp_log_level_set("wifi", ESP_LOG_WARN);  // enable WARN logs from WiFi stack
     // esp_log_level_set("dhcpc", ESP_LOG_INFO); // enable INFO logs from DHCP client
 
@@ -105,6 +101,8 @@ void setup()
     {
         //log_e("xStructQueue == NULL");
     }
+
+    // launch the Tasks in order
 
     xTaskCreatePinnedToCore(
         Task_PPM_UpdateNeedles, // function name
@@ -139,5 +137,5 @@ void setup()
 
 void loop()
 {
-
+    // do nothing
 }

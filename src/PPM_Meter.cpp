@@ -78,12 +78,11 @@ void PPM_Init()
 
 float integratedValueFromRaw(float oldIntegratedValue, int16_t rawInt16Value)
 {
-    const float ATTACK = 0.35;       // greater is faster
-    const float RELEASE = 0.9991;    // greater is slower
+    const float ATTACK = 0.15;       // greater is faster was 0.35
+    const float RELEASE = 0.9990;    // greater is slower was 0.9991
 
-    // 'rectify' and convert to float
-    //float rawFloatValue = (float)((uint16_t)32768 + (uint16_t)rawInt16Value);
-    float rawFloatValue = (rawInt16Value < 0) ? -rawInt16Value : rawInt16Value;
+    // raw is already 'rectified', so convert to float
+    float rawFloatValue = rawInt16Value;
 
     // integrate to required PPM attack/recover balistic
     if (rawFloatValue > oldIntegratedValue)

@@ -8,46 +8,12 @@
 #include <Arduino.h>
 #include <driver/i2s.h>
 
-/*
-*   ADC	name			    ESP32 name
-*   B		<- yellow ->    .bck_io_num
-*   LR		<- blue --->	.ws_io_num
-*   D		<- orange ->    .data_in_num
-*   CLK		<- green -->    .mck_io_num - see docs for limited choices
-*/
+#define EA7_B_to_bck_io GPIO_NUM_12     /* yellow */
+#define EA7_LR_to_ws_io GPIO_NUM_11     /* blue   */
+#define EA7_D_to_data_in GPIO_NUM_10    /* orange */
+#define EA7_CLK_to_mck_io GPIO_NUM_3    /* green  */
 
-// TODO: change the pins to be on the same side as the 5v pin - eg 10, 11 and 12 ? 
-#define EA7_B_to_bck_io GPIO_NUM_17
-#define EA7_LR_to_ws_io GPIO_NUM_16
-#define EA7_D_to_data_in GPIO_NUM_21
-
-// GPIO_NUM_3
-// I2S_PIN_NO_CHANGE
-// MCK pin. Note that ESP32 supports setting MCK on GPIO_NUM_1, GPIO_NUM_2 and GPIO_NUM_3 only
-//    or is it GPIO_NUM_0, GPIO_NUM_1 and GPIO_NUM_3 ?  Need to do some more reading.
-#define EA7_CLK_to_mck_io GPIO_NUM_3
-
-// strictly for development use
-#define BYPASS_I2S_INIT  0 /* 1 = bypass | 0 = init */
-#define BYPASS_I2S_INPUT 0 /*  // 1 = random values | 0 = i2s input */
-
-/*
-*   ADC mode switches          
-*          dip switches        J0  J1  J2
-
-*   master +  0  -  -          R   R   L
-*
-*   slave  -  0  -  -          L   L   L
-*
-*   The Jumper J2 is used to obtain half the frequency that you have put on J1 the 22 or 24.
-*
-*   For example, J1 in 24 and J2 in position 1/2 clock your clock, frequency is 12mhz.
-*
-*   With the dip switch 3 on +, you get 96k, and on - 48k.
-*
-*   If you want 192k you have to put J1 on 24 and J2 on full, not on 1/2 clock.
-*
-*/
+// NOTE: ESP32 supports setting MCK only on GPIO_NUM_1, GPIO_NUM_2 or GPIO_NUM_3
 
 #define EA7_SampleRate 48000
 
@@ -65,11 +31,6 @@ struct {
 void I2S_Init()
 {
     //log_i("CoreID %i", (int)xPortGetCoreID());
-
-    if (BYPASS_I2S_INIT)
-    {
-        return;
-    }
 
     // Set up I2S Processor configuration
     const i2s_config_t i2s_config = {
@@ -109,18 +70,9 @@ void I2S_Init()
 
 void I2S_Read(rawSampleStruct_t &rawSample) // perhaps better to just return a rawSampleStruct_t
 {
-    if (BYPASS_I2S_INPUT || BYPASS_I2S_INIT)
-    {
-        rawSample.left = random(-7000, 7000);
-        rawSample.right = random(-7000, 7000);
-        return;
-    }
-
-    //log_i("before");
     // Get I2S data and place in data buffer
     size_t bytesIn = 0;
     esp_err_t result = i2s_read(I2S_PORT, &sBuffer, EA7_BufferLen, &bytesIn, portMAX_DELAY);
-    //log_i("after");
 
     if (result == ESP_OK)
     {
@@ -137,13 +89,16 @@ void I2S_Read(rawSampleStruct_t &rawSample) // perhaps better to just return a r
         {
             for (int16_t i = 0; i < samples_read; i++)
             {
+                // The idea here is 'rectify' and reduce the data rate.
                 // This appears to do the job, but is it the correct way?
                 // A better way might be to average the samples, but should
                 // this be before taking the absolute values or not?
                 left = sBuffer[i].left;
                 right = sBuffer[i].right;
+                // 'rectify'
                 if (left < 0) left = -left;
                 if (right < 0) right = -right;
+                // save the peaks
                 if (left > rawSample.left) rawSample.left = left;
                 if (right > rawSample.right) rawSample.right = right;
             }
