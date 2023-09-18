@@ -7,6 +7,7 @@
 
 #include "PPM_Meter.hpp"
 #include <TFT_eSPI.h>
+#include <mutex>
 
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite theSprite = TFT_eSprite(&tft);
@@ -24,6 +25,7 @@ const float PiOver180 = Pi / 180.0;
 
 static struct
 {
+    std::mutex mu;
     float left = 0;
     float right = 0;
 } storedIntegratedValue;
@@ -52,7 +54,7 @@ void PPM_Init()
         39.0 * PiOver180,  // 7   - 6
         45.5 * PiOver180,  // max - 4
     };
-    String label[] = {"", "1", "2", "3", "4", "5", "6", "7", ""};
+    const String label[] = {"", "1", "2", "3", "4", "5", "6", "7", ""};
     int length;
     for (int i = 0; i < 9; i++)
     {
@@ -101,9 +103,11 @@ void PPM_ProcessAndStore(int16_t rawL, int16_t rawR)
     integratedR = integratedValueFromRaw(integratedR, rawR);
 
     // TODO: lock
+    storedIntegratedValue.mu.lock();
     storedIntegratedValue.left = integratedL;
     storedIntegratedValue.right = integratedR;
     // TODO: unlock
+    storedIntegratedValue.mu.unlock();
 }
 
 void plotNeedle(float angle, int color) // angle in radians
@@ -146,7 +150,7 @@ void Task_PPM_UpdateNeedles(void *pvParameters)
 
     //log_i("CoreID %i", (int)xPortGetCoreID());
 
-    int counter = 0;
+    // int counter = 0;
     PPM_Init();
     vTaskDelay(500 / portTICK_RATE_MS);
 
@@ -172,9 +176,11 @@ void Task_PPM_UpdateNeedles(void *pvParameters)
             }
 
             // TODO: lock
+            storedIntegratedValue.mu.lock();
             integratedL = storedIntegratedValue.left;
             integratedR = storedIntegratedValue.right;
             // TODO: unlock
+            storedIntegratedValue.mu.unlock();
 
             // Frankly, the balistics looked nicer when I was integrating the angles (not the raw values).
 

@@ -2,24 +2,29 @@
 
 ![Stereo PPM](docs/IMG_0082.jpeg)
 
-A Peak Programme Meter (PPM) display audio levels on a logarithmic scale numbered 1 to 7. If responds fast to peaks and returns slowly. The attack and return ballists allow an experienced operator to produce a consistent volume levels accros varrying material.
+A Peak Programme Meter (PPM) displays audio levels on a logarithmic scale numbered 1 to 7. It responds fast to peaks and returns slowly. The attack and return ballists allow an experienced operator to produce a consistent volume levels accros varrying material.
 
-It is not a True Peak Meter, VU Meter or a modern Loudness Meter.  However, it has been in use for decades and is highly respected by many profession audio enginers. Invented by the BBC and evolved to the current specification emulated here.  It is identical in everyway to the EBU and SABC meters, except for the scale.  A VU meter is slow to respond to peaks and does not have a logrithmic scale. A True Peak Meter reponds to very short peaks, but not measure volume.
+It is not a True Peak Meter, VU Meter or a modern Loudness Meter.  However, it has been in use for decades and is highly respected by many profession audio enginers. Invented by the BBC and evolved to the current specification emulated here.  It is identical in everyway to the EBU and SABC meters, except for the scale markings.  A VU meter is slow to respond to peaks and does not have a logrithmic scale. A True Peak Meter reponds to very short peaks, but does not measure volume. A Loudness Meter does what if says on the tin, but could be overkill for DATV.
 
 NOTE: The above is a simplified summary to what is a very complicated subject.
 
 ## Current Status
-Note: All development takes place on the main branch.
+All development takes place on the main branch, so it might be better to douwnload the latest release.
 
-The firmware is fully working and the ballist is close to the IEC 60268-10 Type IIa specification. Of cource, there is room for improvement.
+The firmware is fully working and the ballists are close to the IEC 60268-10 Type IIa specification. Of cource, there is room for improvement.
 
 This version works in MASTER mode at 48kHz when connected to an Analogue to i2s Convertor. Other convertors, may also work.
 
 SLAVE mode has not been investigated.
 
+## TODO
+
+- Implement MS mode using the -6dB standard. This will require an external switch connected to a GPIO line and I will need to convert my mono pre-amplifier to stereo.
+- Test with Justin's USB-I2S and HDMI->I2S adapters.
+
 ## Hardware
 
-LilyGo T-Display-S3R8 version H569 with 1.9 inch ST7789 LCD Display. Model H569 does not have a touch screen and this is important.  The touch screen version will not work!
+LilyGo T-Display-S3R8 version H569 or H577 with 1.9 inch ST7789 LCD Display. Models H569/H577 do not have a touch screen and this is important.  The touch screen versions will not work!
 
 Link: [LilyGo T-Display-S3R8](<https://www.lilygo.cc/products/t-display-s3?variant=42284559827125>)
 
@@ -64,10 +69,10 @@ right
 left
 ```
 
-The T-Display-S3R8 must be powered via the Type-C USB socket. A norma USB data cable when flashing, or a power only cable from elsewhere. Attepts to feed power in via any other means is not reccomended.
+The T-Display-S3R8 must be powered via the Type-C USB socket. A normal USB data cable for firmware flashing, or a power only cable for normal use. Attepts to feed power in via any other means is not reccomended.
 
 ## Firmware Installation
-There are two ways of flashing the firmare to the LilyGo T-Display-S3R8. The easiest would to download and install [Flash Tools for Windows](https://www.espressif.com/en/support/download/other-tools), select ESP32-S3, and use the PPM binary included in the release by moving it to the Flash Download Tools bin folder. I haven't been able to test this procedure, because I don't own a Windows PC. HOWEVER, I haven't discovered how to build a bin file.  The 'Build Filesystem Image' command doesn't suceed.
+There are two ways of flashing the firmare to the LilyGo T-Display-S3R8. The easiest would to download and install [Flash Tools for Windows](https://www.espressif.com/en/support/download/other-tools), select ESP32-S3, and use the PPM binary included in the release by moving it to the Flash Download Tools bin folder. I haven't been able to test this procedure, because I don't own a Windows and I haven't discovered how to build a bin file.  The 'Build Filesystem Image' command doesn't succeed.
 
 The other way is as follows...
 
