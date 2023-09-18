@@ -13,6 +13,8 @@
 #include "PPM_Meter.hpp"
 #include "I2S_Input.hpp"
 
+#define MS_SWITCH   1
+
 TaskHandle_t ReadI2S_handle = NULL;
 TaskHandle_t UpdateScreen_handle = NULL;
 QueueHandle_t xStructQueue = NULL;
@@ -39,8 +41,15 @@ void Task_ReadI2S(void *pvParameters)
 
         // log_i("count %i, rawL %i, rawR %i", (int)rawSample.count, (int)rawSample.left[0], (int)rawSample.right[0]);
 
-        xMessage.left = rawSample.left;
-        xMessage.right = rawSample.right;
+        bool stateMSmode = !digitalRead(MS_SWITCH);
+
+        if (stateMSmode) {
+            xMessage.left = (rawSample.left - rawSample.right) / 2;
+            xMessage.right = (rawSample.left + rawSample.right) / 2;
+        } else {
+            xMessage.left = rawSample.left;
+            xMessage.right = rawSample.right;
+        }
 
         xQueueSend(xStructQueue, (void *)&xMessage, (TickType_t)0);
 
@@ -76,6 +85,8 @@ void Task_UpdateBallistiics(void *pvParameters)
 
 void setup()
 {
+    pinMode(MS_SWITCH, INPUT_PULLUP);
+
     // Serial.begin(115200);
     // delay(1000);
     // // esp_log_level_set("*", ESP_LOG_ERROR);    // set all components to ERROR level

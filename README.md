@@ -4,6 +4,8 @@
 
 A Peak Programme Meter (PPM) displays audio levels on a logarithmic scale numbered 1 to 7. It responds fast to peaks and returns slowly. The attack and return ballists allow an experienced operator to produce a consistent volume levels accros varrying material.
 
+MS mode (ie Mid/Side) can be selected with an external toggle switch.
+
 It is not a True Peak Meter, VU Meter or a modern Loudness Meter.  However, it has been in use for decades and is highly respected by many profession audio enginers. Invented by the BBC and evolved to the current specification emulated here.  It is identical in everyway to the EBU and SABC meters, except for the scale markings.  A VU meter is slow to respond to peaks and does not have a logrithmic scale. A True Peak Meter reponds to very short peaks, but does not measure volume. A Loudness Meter does what if says on the tin, but could be overkill for DATV.
 
 NOTE: The above is a simplified summary to what is a very complicated subject.
@@ -19,7 +21,6 @@ SLAVE mode has not been investigated.
 
 ## TODO
 
-- Implement MS mode using the -6dB standard. This will require an external switch connected to a GPIO line and I will need to convert my mono pre-amplifier to stereo.
 - Test with Justin's USB-I2S and HDMI->I2S adapters.
 
 ## Hardware
@@ -31,6 +32,8 @@ Link: [LilyGo T-Display-S3R8](<https://www.lilygo.cc/products/t-display-s3?varia
 Any "Standard/Philips" i2s input device, such as a TOSLINK, S/PDIF or Analogue to i2s convertor operating at 48kHz 16bit.
 
 Example: [AudioPhonics Stereo ADC Board WM8782](<https://www.audiophonics.fr/en/devices-hifi-audio-adc/stereo-adc-board-wm8782-i2s-24bit-192khz-p-14897.html>)
+
+External toggle switch to enable MS mode.
 
 ## Pin Connections
 The i2s specification omits to provide a standard for the bus names.
@@ -70,6 +73,8 @@ left
 ```
 
 The T-Display-S3R8 must be powered via the Type-C USB socket. A normal USB data cable for firmware flashing, or a power only cable for normal use. Attepts to feed power in via any other means is not reccomended.
+
+Connect a toogle switch between GPIO Pin 1 and GND to enable MS mode.
 
 ## Firmware Installation
 There are two ways of flashing the firmare to the LilyGo T-Display-S3R8. The easiest would to download and install [Flash Tools for Windows](https://www.espressif.com/en/support/download/other-tools), select ESP32-S3, and use the PPM binary included in the release by moving it to the Flash Download Tools bin folder. I haven't been able to test this procedure, because I don't own a Windows and I haven't discovered how to build a bin file.  The 'Build Filesystem Image' command doesn't succeed.
@@ -133,6 +138,8 @@ Response to isolated bursts of sine wave whose steady state amplitude deflects t
 0.5ms of 10kHz -17.0   ±2.0dB
 
 Return time: 24 dB in 2.8 ±0.3 seconds (from Mark 7 to Mark 1)
+
+MS mode conforms to the -6dB standard.
 ```
 
 ## License

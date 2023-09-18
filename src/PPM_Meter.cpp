@@ -102,11 +102,9 @@ void PPM_ProcessAndStore(int16_t rawL, int16_t rawR)
     integratedL = integratedValueFromRaw(integratedL, rawL);
     integratedR = integratedValueFromRaw(integratedR, rawR);
 
-    // TODO: lock
     storedIntegratedValue.mu.lock();
     storedIntegratedValue.left = integratedL;
     storedIntegratedValue.right = integratedR;
-    // TODO: unlock
     storedIntegratedValue.mu.unlock();
 }
 
@@ -175,11 +173,9 @@ void Task_PPM_UpdateNeedles(void *pvParameters)
                 theSprite.print(markData[i].label);
             }
 
-            // TODO: lock
             storedIntegratedValue.mu.lock();
             integratedL = storedIntegratedValue.left;
             integratedR = storedIntegratedValue.right;
-            // TODO: unlock
             storedIntegratedValue.mu.unlock();
 
             // Frankly, the balistics looked nicer when I was integrating the angles (not the raw values).

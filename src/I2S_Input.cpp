@@ -14,6 +14,7 @@
 #define EA7_CLK_to_mck_io GPIO_NUM_3    /* green  */
 
 // NOTE: ESP32 supports setting MCK only on GPIO_NUM_1, GPIO_NUM_2 or GPIO_NUM_3
+//  However, GPIO_NUM_1 is now being used to enable MS mode.
 
 #define EA7_SampleRate 48000
 
