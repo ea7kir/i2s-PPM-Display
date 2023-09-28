@@ -15,13 +15,7 @@ All development takes place on the main branch, so it might be better to douwnlo
 
 The firmware is fully working and the ballists are close to the IEC 60268-10 Type IIa specification. Of cource, there is room for improvement.
 
-This version works in MASTER mode at 48kHz when connected to an Analogue to i2s Convertor. Other convertors, may also work.
-
-SLAVE mode has not been investigated.
-
-## TODO
-
-- Test with Justin's USB-I2S and HDMI->I2S adapters.
+The firmware works in MASTER mode at 48kHz when connected to a AudioPhonics Stereo ADC Board WM8782. Other ADCs and USB or HDMI to i2s adapters may also work, provided they operate in SLAVE mode at 48kHz.
 
 ## Hardware
 
@@ -29,7 +23,7 @@ LilyGo T-Display-S3R8 version H569 or H577 with 1.9 inch ST7789 LCD Display. Mod
 
 Link: [LilyGo T-Display-S3R8](<https://www.lilygo.cc/products/t-display-s3?variant=42284559827125>)
 
-Any "Standard/Philips" i2s input device, such as a TOSLINK, S/PDIF or Analogue to i2s convertor operating at 48kHz 16bit.
+Any "Standard/Philips" i2s input device, such as a TOSLINK, S/PDIF or Analogue to i2s convertor operating in SLAVE mode at 48kHz 16bit.
 
 Example: [AudioPhonics Stereo ADC Board WM8782](<https://www.audiophonics.fr/en/devices-hifi-audio-adc/stereo-adc-board-wm8782-i2s-24bit-192khz-p-14897.html>)
 
@@ -76,14 +70,11 @@ The T-Display-S3R8 must be powered via the Type-C USB socket. A normal USB data 
 
 Connect a toogle switch between GPIO Pin 1 and GND to enable MS mode.
 
-## Firmware Installation
-There are two ways of flashing the firmare to the LilyGo T-Display-S3R8. The easiest would to download and install [Flash Tools for Windows](https://www.espressif.com/en/support/download/other-tools), select ESP32-S3, and use the PPM binary included in the release by moving it to the Flash Download Tools bin folder. I haven't been able to test this procedure, because I don't own a Windows and I haven't discovered how to build a bin file.  The 'Build Filesystem Image' command doesn't succeed.
+## Firmware Installation - the easy way
+Download and install [Flash Tools for Windows](https://www.espressif.com/en/support/download/other-tools), select ESP32-S3, and use the PPM binary included in the release by moving it to the Flash Download Tools bin folder. Set setting the to address 0. However, I haven't been able to try this method myself as I don't own a Wondows PC.
 
-The other way is as follows...
-
-## Development Environmet
-
-VSCode with the PlatformIO extension.
+## DFirmware Installation - the hard way
+Use VSCode with the PlatformIO extension.
 ```
 Edit file: 
     .pio/libdeps/lilyg0-t-display-s3/TFT_eSPI/User_Setup_Sketch.h
