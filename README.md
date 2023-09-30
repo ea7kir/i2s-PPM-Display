@@ -70,7 +70,7 @@ The T-Display-S3R8 must be powered via the Type-C USB socket. A normal USB data 
 
 Connect a toogle switch between GPIO Pin 1 and GND to enable MS mode.
 
-## DFirmware Installation
+## Firmware Installation
 Use VSCode with the PlatformIO extension.
 ```
 Edit file: 
