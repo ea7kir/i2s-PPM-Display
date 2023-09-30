@@ -70,10 +70,7 @@ The T-Display-S3R8 must be powered via the Type-C USB socket. A normal USB data 
 
 Connect a toogle switch between GPIO Pin 1 and GND to enable MS mode.
 
-## Firmware Installation - the easy way
-Download and install [Flash Tools for Windows](https://www.espressif.com/en/support/download/other-tools), select ESP32-S3, and use the PPM binary included in the release by moving it to the Flash Download Tools bin folder. Set setting the to address 0. However, I haven't been able to try this method myself as I don't own a Wondows PC.
-
-## DFirmware Installation - the hard way
+## DFirmware Installation
 Use VSCode with the PlatformIO extension.
 ```
 Edit file: 
