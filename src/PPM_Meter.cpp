@@ -11,6 +11,7 @@
 
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite theSprite = TFT_eSprite(&tft);
+TFT_eSprite backgroundSprite = TFT_eSprite(&tft);
 
 const int pivotX = 160, pivotY = 250;
 const int needleRadius = 190;
@@ -76,6 +77,20 @@ void PPM_Init()
     tft.fillScreen(TFT_BLACK);
     theSprite.createSprite(320, 170);
     theSprite.setViewport(0, 0, 320, 170);
+
+    //  clear the sprite
+    backgroundSprite.createSprite(320, 170);
+    backgroundSprite.setViewport(0, 0, 320, 170);
+    backgroundSprite.fillSprite(TFT_BLACK);
+
+    // draw the scale
+    for (int i = 0; i < 9; i++)
+    {
+        backgroundSprite.drawWideLine(markData[i].startX, markData[i].startY, markData[i].tipX, markData[i].tipY, 3, TFT_WHITE);
+        backgroundSprite.setCursor(markData[i].txtX, markData[i].txtY, 2);
+        backgroundSprite.print(markData[i].label);
+    }
+
 }
 
 float integratedValueFromRaw(float oldIntegratedValue, int16_t rawInt16Value)
@@ -108,24 +123,24 @@ void PPM_ProcessAndStore(int16_t rawL, int16_t rawR)
     storedIntegratedValue.mu.unlock();
 }
 
-void plotNeedle(float angle, int color) // angle in radians
-{
-    const float ppmMin = -45.5 * PiOver180, ppmMax = 45.5 * PiOver180;
-    if (angle < ppmMin)
-        angle = ppmMin;
-    else if (angle > ppmMax)
-        angle = ppmMax;
-    int tipX = pivotX + round(needleRadius * sin(angle));
-    int tipY = pivotY - round(needleRadius * cos(angle));
-    theSprite.drawWideLine(pivotX, pivotY, tipX, tipY, 3, color);
-}
+// void plotNeedle(float angle, int color) // angle in radians
+// {
+//     // const float ppmMin = -45.5 * PiOver180, ppmMax = 45.5 * PiOver180;
+//     // if (angle < ppmMin)
+//     //     angle = ppmMin;
+//     // else if (angle > ppmMax)
+//     //     angle = ppmMax;
+//     int tipX = pivotX + round(needleRadius * sin(angle));
+//     int tipY = pivotY - round(needleRadius * cos(angle));
+//     theSprite.drawWideLine(pivotX, pivotY, tipX, tipY, 3, color);
+// }
 
 float angleFromIntegratedValue(float integratedValue)
 {
     // convert to dbfs
     float normalizedValue = integratedValue / 32768;
     float dbfs = 20 * log10(normalizedValue);
-    if (dbfs < -32) // am i doing this again?
+    if (dbfs < -32)
         dbfs = -32;
     else if (dbfs > -4)
         dbfs = -4;
@@ -145,6 +160,7 @@ void Task_PPM_UpdateNeedles(void *pvParameters)
 {
     float integratedL, integratedR;
     float slowAngleL = -20, slowAngleR = 20;
+    int tipX, tipY;
 
     //log_i("CoreID %i", (int)xPortGetCoreID());
 
@@ -163,15 +179,17 @@ void Task_PPM_UpdateNeedles(void *pvParameters)
             //log_i("tick %i", ++counter);
 
             //  clear the sprite
-            theSprite.fillSprite(TFT_BLACK);
+            // theSprite.fillSprite(TFT_BLACK);
 
-            // draw the scale
-            for (int i = 0; i < 9; i++)
-            {
-                theSprite.drawWideLine(markData[i].startX, markData[i].startY, markData[i].tipX, markData[i].tipY, 3, TFT_WHITE);
-                theSprite.setCursor(markData[i].txtX, markData[i].txtY, 2);
-                theSprite.print(markData[i].label);
-            }
+            // // draw the scale
+            // for (int i = 0; i < 9; i++)
+            // {
+            //     theSprite.drawWideLine(markData[i].startX, markData[i].startY, markData[i].tipX, markData[i].tipY, 3, TFT_WHITE);
+            //     theSprite.setCursor(markData[i].txtX, markData[i].txtY, 2);
+            //     theSprite.print(markData[i].label);
+            // }
+
+            backgroundSprite.pushToSprite(&theSprite, 0, 0);
 
             storedIntegratedValue.mu.lock();
             integratedL = storedIntegratedValue.left;
@@ -186,13 +204,22 @@ void Task_PPM_UpdateNeedles(void *pvParameters)
             //log_i("slowAngleL %f, slowAngleR %f", slowAngleL, slowAngleR);
 
             // draw the needles
-            plotNeedle(slowAngleR, TFT_DARKGREEN);
-            plotNeedle(slowAngleL, TFT_RED);
+
+            tipX = pivotX + round(needleRadius * sin(slowAngleR));
+            tipY = pivotY - round(needleRadius * cos(slowAngleR));
+            theSprite.drawWideLine(pivotX, pivotY, tipX, tipY, 3, TFT_DARKGREEN);
+
+            tipX = pivotX + round(needleRadius * sin(slowAngleL));
+            tipY = pivotY - round(needleRadius * cos(slowAngleL));
+            theSprite.drawWideLine(pivotX, pivotY, tipX, tipY, 3, TFT_RED);
+
+            // plotNeedle(slowAngleR, TFT_DARKGREEN);
+            // plotNeedle(slowAngleL, TFT_RED);
 
             // publish to the screen
             theSprite.pushSprite(0, 0);
 
-            vTaskDelay(10 / portTICK_RATE_MS);
+            vTaskDelay(5 / portTICK_RATE_MS);
 
             isReady = true;
         }
