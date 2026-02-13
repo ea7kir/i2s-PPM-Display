@@ -132,7 +132,7 @@ MS mode conforms to the -6dB standard.
 
 ## License
 
-Copyright (c) 2023 Michael Naylor EA7KIR (https://michaelnaylor.es)
+Copyright (c) 2023 Michael Naylor EA7KIR
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
